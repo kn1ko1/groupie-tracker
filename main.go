@@ -54,28 +54,40 @@ type Relations struct {
 	DatesandLocations map[string][]string `json:"datesLocations"`
 }
 
-func artistsConvertor(url string, object interface{}) error {
+// func handleError(w http.ResponseWriter, err error, message string, statusCode int) {
+//     if err != nil {
+//         fmt.Println(message, err)
+//         http.Error(w, message, statusCode)
+//     }
+// }
+
+
+func artistsConvertor(w http.ResponseWriter, url string, object interface{}) error {
 	//We have created this function to convert the information from the Artists JSON files. We provide a URL and an objest called responseArtists noted below in our main function.
 
 	response, err := http.Get(url)
 	//We name this variable response and use Get to get the information needed from the URL as well as dealing with an error.
 	if err != nil {
-		fmt.Println("Problem with artist conversion.")
-		os.Exit(1)
-		//If we have an error we print the above message and then exit. If no error then we continue on.
-	}
+		showError(w, "Failed to fetch artist data from API.", http.StatusInternalServerError)
+        return err
+    }
 	defer response.Body.Close()
 	//This defer means that when this entire function completes its purpose we can come back to this position and close the function.
 
 	responseData, err := io.ReadAll(response.Body)
 	//We read the info from response using ReadAll and name it to the variable responseData.
 	if err != nil {
-		fmt.Println("Problem with artist conversion.")
-		os.Exit(1)
-		//If we have an error we print the above message and then exit. If no error then we continue on.
-	}
-	return json.Unmarshal(responseData, &object)
-	//We return the unmarshalled data from the URL.
+		showError(w, "Error reading response data.", http.StatusInternalServerError)
+        return err
+    }
+
+	err = json.Unmarshal(responseData, &object)
+	if err != nil {
+        showError(w, "Error parsing artist data.", http.StatusInternalServerError)
+        return err
+    }
+
+	return nil
 }
 
 func locationConvertor(url string) []string {
@@ -210,15 +222,24 @@ func fromJsonArtist(ja Artists) ([]Artist, error) {
 }
 
 func showError(w http.ResponseWriter, message string, statusCode int) {
-	//This funciton is created to show our 404 error message.
-	t, err := template.ParseFiles("template/errors.html")
-	//We parse the html error file and display.
-	if err == nil {
-		w.WriteHeader(statusCode)
-		t.Execute(w, message)
-		return
-	}
+    // Log the error message and status code to the console
+    fmt.Printf("Error: %s (Status Code: %d)\n", message, statusCode)
+
+    // Set the response header with the status code
+    w.WriteHeader(statusCode)
+
+    // Parse and execute the errors.html template
+    t, err := template.ParseFiles("template/errors.html")
+    if err != nil {
+        // Fallback error message in case the template fails
+        http.Error(w, "An unexpected error occurred.", http.StatusInternalServerError)
+        return
+    }
+
+    // Pass the error message to the template and render it
+    t.Execute(w, message)
 }
+
 
 func main() {
 
