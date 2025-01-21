@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Band Info</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/artists">Artists</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {{ template "content" . }}
+    </main>
+</body>
+</html>
+{{ define "content" }}
+<section id="artists">
+    <h2>Artists</h2>
+    <form action="/artists" method="GET">
+        <label for="name">Filter by Name:</label>
+        <input type="text" id="name" name="name" placeholder="Enter artist name">
+
+        <label for="year">Filter by Start Year:</label>
+        <input type="number" id="year" name="year" placeholder="Enter year">
+
+        <button type="submit">Filter</button>
+    </form>
+    
+    <div id="artist-list">
+        {{ range .Artists }}
+        <div class="artist-card">
+            <img src="{{ .Image }}" alt="{{ .Name }}">
+            <h3>{{ .Name }}</h3>
+            <p>First Album: {{ .FirstAlbum }}</p>
+            <p>Year Started: {{ .StartYear }}</p>
+            <p>Members:</p>
+            <ul>
+                {{ range .Members }}
+                <li>{{ . }}</li>
+                {{ end }}
+            </ul>
+        </div>
+        {{ end }}
+    </div>
+</section>
+{{ end }}
