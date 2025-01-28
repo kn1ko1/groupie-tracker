@@ -34,18 +34,19 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Filter artists
 	filteredArtists := make([]Artist, 0)
 	for _, artist := range artists {
-		if (nameFilter == "" || containsIgnoreCase(artist.Name, nameFilter)) &&
+		if (nameFilter == "" || (containsIgnoreCase(artist.Name, nameFilter))) &&
 			(yearFilter == "" || strconv.Itoa(artist.StartYear) == yearFilter) {
 			fmt.Printf("Checking artist: '%s' (Year: %d)\n", artist.Name, artist.StartYear)
-			fmt.Printf("Name match: %v (filter: '%s')\n", matchName, nameFilter)
-			fmt.Printf("Year match: %v (filter: '%s')\n", matchYear, yearFilter)
-
-			if matchName && matchYear {
-			fmt.Printf("Matched artist: '%s'\n", artist.Name)
-			// nolint:staticcheck
+			// fmt.Printf("Name match: %v (filter: '%s')\n", matchName, nameFilter)
+			// fmt.Printf("Year match: %v (filter: '%s')\n", matchYear, yearFilter)
 			filteredArtists = append(filteredArtists, artist)
-			//fmt.Println(containsIgnoreCase("Beatles", "beat")) // Should return true
-			//fmt.Println(containsIgnoreCase("Beatles", "rock")) // Should return false
+
+		// if matchName && matchYear {
+		// 	fmt.Printf("Matched artist: '%s'\n", artist.Name)
+		// 	// nolint:staticcheck
+		// 	filteredArtists = append(filteredArtists, artist)
+		// 	//fmt.Println(containsIgnoreCase("Beatles", "beat")) // Should return true
+		// 	//fmt.Println(containsIgnoreCase("Beatles", "rock")) // Should return false
 		}
 	}
 
