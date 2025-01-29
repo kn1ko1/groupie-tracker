@@ -9,7 +9,7 @@ import (
 	"text/template"
 )
 
-var templates = template.Must(template.ParseGlob(".\\frontend\\templates\\*.html"))
+var templates = template.Must(template.ParseGlob("./frontend/templates/*.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	err := templates.ExecuteTemplate(w, tmpl, data)
@@ -33,20 +33,18 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 
 	// Filter artists
 	filteredArtists := make([]Artist, 0)
-	for _, artist := range artists {
-		if (nameFilter == "" || (containsIgnoreCase(artist.Name, nameFilter))) &&
-			(yearFilter == "" || strconv.Itoa(artist.StartYear) == yearFilter) {
-			fmt.Printf("Checking artist: '%s' (Year: %d)\n", artist.Name, artist.StartYear)
-			// fmt.Printf("Name match: %v (filter: '%s')\n", matchName, nameFilter)
-			// fmt.Printf("Year match: %v (filter: '%s')\n", matchYear, yearFilter)
-			filteredArtists = append(filteredArtists, artist)
+	if len(artist) == 0{
+		fmt.Println("No artists to filter")
+		return
+	}
 
-		// if matchName && matchYear {
-		// 	fmt.Printf("Matched artist: '%s'\n", artist.Name)
-		// 	// nolint:staticcheck
-		// 	filteredArtists = append(filteredArtists, artist)
-		// 	//fmt.Println(containsIgnoreCase("Beatles", "beat")) // Should return true
-		// 	//fmt.Println(containsIgnoreCase("Beatles", "rock")) // Should return false
+	for _, artist := range artists {
+		// Check both filters
+		nameMatch := nameFilter == "" || containsIgnoreCase(artist.Name, nameFilter)
+		yearMatch := yearFilter == "" || strconv.Itoa(artist.StartYear) == yearFilter
+
+		if nameMatch && yearMatch {
+			filteredArtists = append(filteredArtists, artist)
 		}
 	}
 
@@ -57,8 +55,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		Title:   "Artists - Band Info",
 		Artists: artists,
 	}
-
-	renderTemplate(w, "artists.html", data)
+	//renderTemplate(w, "artists.html", data)
 }
 
 // Helper function for case-insensitive substring matching
