@@ -28,12 +28,16 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get filter values from query parameters
-	nameFilter := r.URL.Query().Get("name")
-	yearFilter := r.URL.Query().Get("year")
+	nameFilter := strings.TrimSpace(r.URL.Query().Get("name"))
+	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
+
+	// Debug: Print filter inputs
+	fmt.Println("Received Name Filter:", nameFilter)
+	fmt.Println("Received Year Filter:", yearFilter)
 
 	// Filter artists
 	filteredArtists := make([]Artist, 0)
-	if len(artist) == 0{
+	if len(artists) == 0 {
 		fmt.Println("No artists to filter")
 		return
 	}
@@ -43,6 +47,12 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		nameMatch := nameFilter == "" || containsIgnoreCase(artist.Name, nameFilter)
 		yearMatch := yearFilter == "" || strconv.Itoa(artist.StartYear) == yearFilter
 
+		// Debug: Print checks for each artist
+		fmt.Printf("Checking artist: '%s' (Year: %d)\n", artist.Name, artist.StartYear)
+		fmt.Printf("  Name filter match: %v (Filter: '%s')\n", nameMatch, nameFilter)
+		fmt.Printf("  Year filter match: %v (Filter: '%s')\n", yearMatch, yearFilter)
+
+		// Apply filters
 		if nameMatch && yearMatch {
 			filteredArtists = append(filteredArtists, artist)
 		}
@@ -53,9 +63,9 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		Artists []Artist
 	}{
 		Title:   "Artists - Band Info",
-		Artists: artists,
+		Artists: filteredArtists,
 	}
-	//renderTemplate(w, "artists.html", data)
+	renderTemplate(w, "artists.html", data)
 }
 
 // Helper function for case-insensitive substring matching
@@ -82,8 +92,8 @@ func main() {
 	http.Handle("/styles.css", http.FileServer(http.Dir("./frontend")))
 
 	// Define routes
-	http.HandleFunc("/", getArtistsPage)          // Default route renders the artists page
-	http.HandleFunc("artists", getArtistsHandler) // JSON API endpoint (optional)
+	http.HandleFunc("/", getArtistsPage)        // Default route renders the artists page
+	http.HandleFunc("/artists", getArtistsPage) // JSON API endpoint (optional)
 
 	fmt.Println("Server running on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
