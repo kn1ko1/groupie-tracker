@@ -32,8 +32,8 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
 
 	// Debug: Print filter inputs
-	fmt.Println("Received Name Filter:", nameFilter)
-	fmt.Println("Received Year Filter:", yearFilter)
+	// fmt.Println("Received Name Filter:", nameFilter)
+	// fmt.Println("Received Year Filter:", yearFilter)
 
 	// Filter artists
 	filteredArtists := make([]Artist, 0)
@@ -48,9 +48,9 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		yearMatch := yearFilter == "" || strconv.Itoa(artist.StartYear) == yearFilter
 
 		// Debug: Print checks for each artist
-		fmt.Printf("Checking artist: '%s' (Year: %d)\n", artist.Name, artist.StartYear)
-		fmt.Printf("  Name filter match: %v (Filter: '%s')\n", nameMatch, nameFilter)
-		fmt.Printf("  Year filter match: %v (Filter: '%s')\n", yearMatch, yearFilter)
+		// fmt.Printf("Checking artist: '%s' (Year: %d)\n", artist.Name, artist.StartYear)
+		// fmt.Printf("  Name filter match: %v (Filter: '%s')\n", nameMatch, nameFilter)
+		// fmt.Printf("  Year filter match: %v (Filter: '%s')\n", yearMatch, yearFilter)
 
 		// Apply filters
 		if nameMatch && yearMatch {
