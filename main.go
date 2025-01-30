@@ -30,40 +30,38 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Get filter values from query parameters
 	nameFilter := strings.TrimSpace(r.URL.Query().Get("name"))
 	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
+	locationFilter := strings.TrimSpace(r.URL.Query().Get("location")) // Future concert filtering
 
-	// Debug: Print filter inputs
-	// fmt.Println("Received Name Filter:", nameFilter)
-	// fmt.Println("Received Year Filter:", yearFilter)
+	// Debugging Output
+	fmt.Println("Page:", r.URL.Path)
+	fmt.Println("Filters - Name:", nameFilter, "Year:", yearFilter, "Location:", locationFilter)
 
-	// Filter artists
+	// Filter artists basedon user selection
 	filteredArtists := make([]Artist, 0)
-	if len(artists) == 0 {
-		fmt.Println("No artists to filter")
-		return
-	}
-
 	for _, artist := range artists {
-		// Check both filters
 		nameMatch := nameFilter == "" || containsIgnoreCase(artist.Name, nameFilter)
 		yearMatch := yearFilter == "" || strconv.Itoa(artist.StartYear) == yearFilter
 
-		// Debug: Print checks for each artist
-		// fmt.Printf("Checking artist: '%s' (Year: %d)\n", artist.Name, artist.StartYear)
-		// fmt.Printf("  Name filter match: %v (Filter: '%s')\n", nameMatch, nameFilter)
-		// fmt.Printf("  Year filter match: %v (Filter: '%s')\n", yearMatch, yearFilter)
-
-		// Apply filters
 		if nameMatch && yearMatch {
 			filteredArtists = append(filteredArtists, artist)
 		}
 	}
 
+	// Ensure 'ShowDetal' is false for '/' (Home) and true for '/artists'
+	isFullView := r.URL.Path == "/artists"
+	if r.URL.Path == "/artists" {
+		isFullView = true
+	}
+
+	// Define template data with dynamic content for home ('/home') vs Artists ('/artists')
 	data := struct {
-		Title   string
-		Artists []Artist
+		Title      string
+		Artists    []Artist
+		ShowDetail bool // Now properly defined
 	}{
-		Title:   "Artists - Band Info",
-		Artists: filteredArtists,
+		Title:      "Artists - Band Info",
+		Artists:    filteredArtists,
+		ShowDetail: isFullView, // Show full details only on `/artists`
 	}
 	renderTemplate(w, "artists.html", data)
 }
