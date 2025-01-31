@@ -52,7 +52,7 @@
             <img src="{{ .Image }}" alt="{{ .Name }}">
             <h3>{{ .Name }}</h3>
 
-            {{ if .ShowDetail }}
+            {{ if $.ShowDetail }}
             <!-- ✅ Only show these details on /artists -->
             <p>First Album: {{ .FirstAlbum }}</p>
             <p>Year Started: {{ .StartYear }}</p>

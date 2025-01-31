@@ -14,8 +14,11 @@ var templates = template.Must(template.ParseGlob("./frontend/templates/*.html"))
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	err := templates.ExecuteTemplate(w, tmpl, data)
 	if err != nil {
-		fmt.Printf("Error rendering template '%s': %v\n", tmpl, err)
-		http.Error(w, "Unable to load template", http.StatusInternalServerError)
+		// Prevent multiple response writes
+		http.Error(w, fmt.Sprintf("Unable to load template: %v", err), http.StatusInternalServerError)
+		return
+		// fmt.Printf("Error rendering template '%s': %v\n", tmpl, err)
+		// http.Error(w, "Unable to load template", http.StatusInternalServerError)
 	}
 }
 
