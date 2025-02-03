@@ -111,10 +111,10 @@ func getArtistsHandler(w http.ResponseWriter, r *http.Request) {
 // Main function to set up the server
 func main() {
 	// Serve static files for styles
-	http.Handle("/styles.css", http.FileServer(http.Dir("./frontend")))
+	http.Handle("/styles.css", http.FileServer(http.Dir("./")))
 
 	// Define routes
-	http.HandleFunc("/", getArtistsPage)    // Default route renders the artists page
+	http.HandleFunc("/", getArtistsPage)        // Default route renders the artists page
 	http.HandleFunc("/artists", getArtistsPage) // JSON API endpoint (optional)
 
 	fmt.Println("Server running on http://localhost:8080")
