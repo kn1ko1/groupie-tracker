@@ -11,7 +11,7 @@
         <h1>Band Info</h1>
         <nav>
             <ul>
-                <li><a href="/home">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="/artists">Artists</a></li>
             </ul>
         </nav>
@@ -28,8 +28,8 @@
         <label for="name">Filter by Artist Name:</label>
         <select id="name" name="name">
             <option value="">All Artists</option>
-            {{ range .Artists }}
-            <option value="{{ .Name }}">{{ .Name }}</option>
+            {{ range .SortedNames }}
+            <option value="{{ . }}">{{ . }}</option>
             {{ end }}
         </select>
 
@@ -37,8 +37,8 @@
         <label for="year">Filter by Start Year:</label>
         <select id="year" name="year">
             <option value="">All Years</option>
-            {{ range .Artists }}
-            <option value="{{ .StartYear }}">{{ .StartYear }}</option>
+            {{ range .SortedYears }}
+            <option value="{{ . }}">{{ . }}</option>
             {{ end }}
         </select>
 
@@ -52,7 +52,7 @@
             <img src="{{ .Image }}" alt="{{ .Name }}">
             <h3>{{ .Name }}</h3>
 
-            {{ if $.ShowDetail }}
+            {{ if $.ShowDetail }}  <!-- Check if ShowDetail is true $ to reference outside of template -->
             <!-- ✅ Only show these details on /artists -->
             <p>First Album: {{ .FirstAlbum }}</p>
             <p>Year Started: {{ .StartYear }}</p>
