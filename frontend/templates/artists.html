@@ -66,5 +66,16 @@
         </div>
         {{ end }}
     </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination">
+        {{ if gt .Page 1 }}
+        <a href="?page={{ .PrevPage }}" class="pagination-btn">Previous</a>
+        {{ end }}
+        <span>Page {{ .Page }} of {{ .TotalPages }}</span>
+        {{ if lt .Page .TotalPages }}
+        <a href="?page={{ .NextPage }}" class="pagination-btn">Next</a>
+        {{ end }}
+    </div>
 </section>
 {{ end }}

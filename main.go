@@ -39,6 +39,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sort.Strings(artistNames) // Sort names alphabetically
+	// sort.Sort(sort.Reverse(sort.IntSlice(startYears))) // Sort years in descending order
 
 	// Sort years in ascending order first
 	sort.Ints(startYears)
@@ -70,7 +71,35 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Ensure 'ShowDetal' is false for '/' (Home) and true for '/artists'
+	// Pagination logic (5 columns x 3 rows = 15 artists per page)
+	const itemsPerPage = 15
+	page := 1
+	if p, err := strconv.Atoi(r.URL.Query().Get("page")); err == nil && p > 0 {
+		page = p
+	}
+
+	startIndex := (page - 1) * itemsPerPage
+	endIndex := startIndex + itemsPerPage
+	if endIndex > len(filteredArtists) {
+		endIndex = len(filteredArtists)
+	}
+
+	paginatedArtists := filteredArtists[startIndex:endIndex]
+
+	// Calculate total pages
+	totalPages := (len(filteredArtists) + itemsPerPage - 1) / itemsPerPage
+
+	// Precompute previous and next page numbers
+	prevPage := page - 1
+	if prevPage < 1 {
+		prevPage = 1
+	}
+	nextPage := page + 1
+	if nextPage > totalPages {
+		nextPage = totalPages
+	}
+
+	// Determine if full view (/artists) or minimal view (/)
 	isFullView := r.URL.Path == "/artists"
 
 	// Define template data with dynamic content for home ('/home') vs Artists ('/artists')
@@ -80,21 +109,23 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		ShowDetail  bool // Now properly defined
 		SortedNames []string
 		SortedYears []int
+		Page        int
+		TotalPages  int
+		PrevPage    int
+		NextPage    int
 	}{
 		Title:       "Artists - Band Info",
-		Artists:     filteredArtists,
+		Artists:     paginatedArtists,
 		ShowDetail:  isFullView, // Show full details only on `/artists`
 		SortedNames: artistNames,
 		SortedYears: uniqueYears, // Now sorted in descending order
+		Page:        page,
+		TotalPages:  totalPages,
+		PrevPage:    prevPage,
+		NextPage:    nextPage,
 	}
 	renderTemplate(w, "artists.html", data)
 }
-
-// Helper function for case-insensitive substring matching
-// func containsIgnoreCase(str, substr string) bool {
-// 	//fmt.Printf("Comparing '%s' with '%s'\n", strings.ToLower(str), strings.ToLower(substr))
-// 	return strings.Contains(strings.ToLower(str), strings.ToLower(substr))
-// }
 
 func getArtistsHandler(w http.ResponseWriter, r *http.Request) {
 	apiURL := "https://groupietrackers.herokuapp.com/api/artists"

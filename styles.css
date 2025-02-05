@@ -1,24 +1,97 @@
-#artist-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ensures wrapping */
-    gap: 20px;
-    justify-content: center;
-    width: 100%; /* Ensures grid spans the page */
-    max-width: 1200px; /* Prevents oversized layouts */
-    margin: 0 auto;
+/* 🌙 Default Dark Mode */
+body {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
 }
 
 .artist-card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 15px;
-    text-align: center;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: #333;
+    color: #ffffff;
+    border: 1px solid #666;
 }
 
+/* Navigation */
+nav {
+    background-color: #222;
+    padding: 10px;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Buttons */
+button {
+    background-color: #444;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button:hover {
+    background-color: #666;
+}
+
+/* Grid Layout for Artist Cards */
+#artist-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Artist Card Styling */
 .artist-card img {
     max-width: 100%;
     height: auto;
     border-radius: 5px;
+}
+
+/* Ensure artist grid is always 5 columns and 3 rows */
+#artist-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Pagination Styling */
+.pagination {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 0 5px;
+    background-color: #444;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.pagination-btn:hover {
+    background-color: #666;
 }
