@@ -25,18 +25,18 @@
 <section id="artists">
     <h2>Artists</h2>
     <form action="/artists" method="GET">
-        <label for="name">Filter by Artist Name:</label>
+        <!-- <label for="name">Filter by Artist Name:</label> -->
         <select id="name" name="name">
-            <option value="">All Artists</option>
+            <option value="">Filter by Artist Name:</option>
             {{ range .SortedNames }}
             <option value="{{ . }}">{{ . }}</option>
             {{ end }}
         </select>
 
         <!-- Year Filter Dropdown -->
-        <label for="year">Filter by Start Year:</label>
+        <!-- <label for="year">Filter by Start Year:</label> -->
         <select id="year" name="year">
-            <option value="">All Years</option>
+            <option value="">Filter by Start Year</option>
             {{ range .SortedYears }}
             <option value="{{ . }}">{{ . }}</option>
             {{ end }}
