@@ -29,13 +29,31 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Fetch locations
+	locationsAPI := "https://groupietrackers.herokuapp.com/api/locations"
+	locations, err := fetchLocationsCached(locationsAPI)
+	if err != nil {
+		http.Error(w, "Failed to fetch locations", http.StatusInternalServerError)
+		return
+	}
+
 	// Extract and sort artist names
 	artistNames := make([]string, 0, len(artists))
 	startYears := make([]int, 0, len(artists))
+	locationSet := make(map[string]bool)
+	uniqueLocations := make([]string, 0)
 
 	for _, artist := range artists {
 		artistNames = append(artistNames, artist.Name)
 		startYears = append(startYears, artist.StartYear)
+
+		// Store unique locations
+		for _, loc := range locations[artist.ID] {
+			if !locationSet[loc] {
+				locationSet[loc] = true
+				uniqueLocations = append(uniqueLocations, loc)
+			}
+		}
 	}
 
 	sort.Strings(artistNames) // Sort names alphabetically
@@ -55,16 +73,31 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	//SortedLocations: uniqueLocations, // ✅ Ensure locations are passed to the template
+
+	sort.Strings(uniqueLocations) // Sort locations alphabetically
+
 	// Get filter values from query parameters
 	nameFilter := strings.TrimSpace(r.URL.Query().Get("name"))
 	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
-	//locationFilter := strings.TrimSpace(r.URL.Query().Get("location")) // Future concert filtering
+	locationFilter := strings.TrimSpace(r.URL.Query().Get("location")) // Future concert filtering
 
 	// Filter artists basedon user selection
 	filteredArtists := make([]Artist, 0)
 	for _, artist := range artists {
 		nameMatch := nameFilter == "" || artist.Name == nameFilter
 		yearMatch := yearFilter == "" || strconv.Itoa(artist.StartYear) == yearFilter
+		locationMatch := locationFilter == ""
+
+		// Check if artist performed at the selected location
+		if !locationMatch {
+			for _, loc := range locations[artist.ID] {
+				if loc == locationFilter {
+					locationMatch = true
+					break
+				}
+			}
+		}
 
 		if nameMatch && yearMatch {
 			filteredArtists = append(filteredArtists, artist)
