@@ -42,6 +42,14 @@
             {{ end }}
         </select>
 
+        <!-- Location Filter Dropdown -->
+        <select id="location" name="location">
+            <option value="">Filter by Concert Location</option>
+            {{ range .SortedLocations }}
+            <option value="{{ . }}" {{ if eq . $.SelectedLocation }}selected{{ end }}>{{ . }}</option>
+            {{ end }}
+        </select>
+     
         <!-- submit button -->
         <button type="submit">Submit</button>
     </form>

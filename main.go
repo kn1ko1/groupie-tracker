@@ -29,22 +29,36 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	locationsAPI := "https://groupietrackers.herokuapp.com/api/locations"
+	locations, err := fetchLocationsCached(locationsAPI)
+	if err != nil {
+		http.Error(w, "Failed to fetch locations1", http.StatusInternalServerError)
+		return
+	}
+
 	// Extract and sort artist names
 	artistNames := make([]string, 0, len(artists))
 	startYears := make([]int, 0, len(artists))
+	locationSet := make(map[string]bool)
+	uniqueLocations := make([]string, 0)
 
 	for _, artist := range artists {
 		artistNames = append(artistNames, artist.Name)
 		startYears = append(startYears, artist.StartYear)
+
+		for _, loc := range locations[artist.ID] {
+			if !locationSet[loc] {
+				locationSet[loc] = true
+				uniqueLocations = append(uniqueLocations, loc)
+			}
+		}
 	}
 
 	sort.Strings(artistNames) // Sort names alphabetically
-	// sort.Sort(sort.Reverse(sort.IntSlice(startYears))) // Sort years in descending order
-
-	// Sort years in ascending order first
 	sort.Ints(startYears)
+	sort.Strings(uniqueLocations) // Sort locations alphabetically
 
-	// Reverse the sorted years to make them descending
+	//Reverse the sorted years to make them descending
 	uniqueYears := make([]int, 0)
 	yearSet := make(map[int]bool)
 	for i := len(startYears) - 1; i >= 0; i-- { // Reverse iteration for descending order
@@ -58,13 +72,23 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Get filter values from query parameters
 	nameFilter := strings.TrimSpace(r.URL.Query().Get("name"))
 	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
-	//locationFilter := strings.TrimSpace(r.URL.Query().Get("location")) // Future concert filtering
+	locationFilter := strings.TrimSpace(r.URL.Query().Get("locations")) // Future concert filtering
 
 	// Filter artists basedon user selection
 	filteredArtists := make([]Artist, 0)
 	for _, artist := range artists {
 		nameMatch := nameFilter == "" || artist.Name == nameFilter
 		yearMatch := yearFilter == "" || strconv.Itoa(artist.StartYear) == yearFilter
+		locationMatch := locationFilter == ""
+
+		if !locationMatch {
+			for _, loc := range locations[artist.ID] {
+				if loc == locationFilter {
+					locationMatch = true
+					break
+				}
+			}
+		}
 
 		if nameMatch && yearMatch {
 			filteredArtists = append(filteredArtists, artist)
@@ -104,25 +128,32 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 
 	// Define template data with dynamic content for home ('/home') vs Artists ('/artists')
 	data := struct {
-		Title       string
-		Artists     []Artist
-		ShowDetail  bool // Now properly defined
-		SortedNames []string
-		SortedYears []int
-		Page        int
-		TotalPages  int
-		PrevPage    int
-		NextPage    int
+		Title            string
+		Artists          []Artist
+		ShowDetail       bool // Now properly defined
+		SortedNames      []string
+		SortedYears      []int
+		Page             int
+		TotalPages       int
+		PrevPage         int
+		NextPage         int
+		SortedLocations  []string
+		SelectedName     string
+		SelectedYear     string
+		SelectedLocation string
 	}{
-		Title:       "Artists - Band Info",
-		Artists:     paginatedArtists,
-		ShowDetail:  isFullView, // Show full details only on `/artists`
-		SortedNames: artistNames,
-		SortedYears: uniqueYears, // Now sorted in descending order
-		Page:        page,
-		TotalPages:  totalPages,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
+		Title:            "Artists - Band Info",
+		Artists:          paginatedArtists,
+		ShowDetail:       isFullView, // Show full details only on `/artists`
+		SortedNames:      artistNames,
+		SortedYears:      uniqueYears, // Now sorted in descending order
+		Page:             page,
+		TotalPages:       totalPages,
+		PrevPage:         prevPage,
+		NextPage:         nextPage,
+		SelectedName:     nameFilter,
+		SelectedYear:     yearFilter,
+		SelectedLocation: locationFilter,
 	}
 	renderTemplate(w, "artists.html", data)
 }
