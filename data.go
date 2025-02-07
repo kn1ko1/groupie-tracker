@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -28,6 +29,7 @@ var (
 	cacheDuration         = 5 * time.Minute // Cache validity duration
 )
 
+// Fetch artists with caching
 func fetchArtistsCached(url string) ([]Artist, error) {
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
@@ -51,6 +53,7 @@ func fetchArtistsCached(url string) ([]Artist, error) {
 	return artists, nil
 }
 
+// Fetch artists from API
 func fetchArtists(url string) ([]Artist, error) {
 	response, err := http.Get(url)
 	if err != nil {
