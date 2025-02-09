@@ -25,7 +25,7 @@
 <section id="artists">
     <h2>Artists</h2>
     <form action="/artists" method="GET">
-        <!-- <label for="name">Filter by Artist Name:</label> -->///
+        <!-- <label for="name">Filter by Artist Name:</label> -->
         <select id="name" name="name">
             <option value="">Filter by Artist Name:</option>
             {{ range .SortedNames }}
@@ -45,18 +45,10 @@
         <select id="location" name="location">
             <option value="">Filter by Concert Location</option>
             {{ range .SortedLocations }}
-            <option value="{{ . }}" {{ if eq . $.SelectedLocation }}selected{{ end }}>{{ . }}</option>
+            <option value="{{ . }}">{{ . }}</option>
             {{ end }}
         </select>
 
-        <!-- Location Filter Dropdown -->
-        <select id="location" name="location">
-            <option value="">Filter by Concert Location</option>
-            {{ range .SortedLocations }}
-            <option value="{{ . }}" {{ if eq . $.SelectedLocation }}selected{{ end }}>{{ . }}</option>
-            {{ end }}
-        </select>
-     
         <!-- submit button -->
         <button type="submit">Submit</button>
     </form>

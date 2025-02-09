@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -85,14 +84,12 @@ func fetchLocationsCached(url string) (map[int][]string, error) {
 
 	// Check if cache is still valid
 	if time.Since(lastLocationFetchTime) < cacheDuration {
-		fmt.Println("Returning cached location data")
 		return cachedLocations, nil
 	}
 
 	// Fetch fresh location data
 	locations, err := fetchLocations(url)
 	if err != nil {
-		//fmt.Println("Error fetching locations:", err)
 		return nil, err
 	}
 
@@ -176,6 +173,9 @@ func fetchLocations(url string) (map[int][]string, error) {
 	for _, entry := range responseData.Index {
 		locations[entry.ID] = entry.Locations
 	}
+
+	// Debugging: Print the locations map
+	//fmt.Println("Fetched locations:", locations)
 
 	return locations, nil
 }

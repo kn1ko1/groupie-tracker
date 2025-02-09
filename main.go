@@ -73,12 +73,13 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 
 	//SortedLocations: uniqueLocations, // ✅ Ensure locations are passed to the template
 
-	sort.Strings(uniqueLocations) // Sort locations alphabetically
+	//sort.Strings(uniqueLocations) // Sort locations alphabetically
 
 	// Get filter values from query parameters
 	nameFilter := strings.TrimSpace(r.URL.Query().Get("name"))
 	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
 	locationFilter := strings.TrimSpace(r.URL.Query().Get("location")) // Future concert filtering
+	//fmt.Println(locationFilter)
 
 	// Filter artists basedon user selection
 	filteredArtists := make([]Artist, 0)
@@ -157,11 +158,13 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		Page:             page,
 		TotalPages:       totalPages,
 		PrevPage:         prevPage,
+		SortedLocations:  uniqueLocations,
 		NextPage:         nextPage,
 		SelectedName:     nameFilter,
 		SelectedYear:     yearFilter,
 		SelectedLocation: locationFilter,
 	}
+
 	renderTemplate(w, "artists.html", data)
 }
 
