@@ -95,3 +95,42 @@ button:hover {
 .pagination-btn:hover {
     background-color: #666;
 }
+/* Center the form and justify the content */
+#filter-form {
+    display: flex;
+    justify-content: center;  /* Centers items horizontally */
+    align-items: center;  /* Aligns items vertically */
+    flex-wrap: wrap;  /* Allows wrapping on smaller screens */
+    gap: 15px;  /* Adds spacing between dropdowns */
+    margin: 20px auto;  /* Adds space and centers the form */
+    padding: 10px;
+    background-color: #222;  /* Dark background */
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    width: fit-content;  /* Makes width adjust to content */
+}
+
+/* Style dropdowns */
+#filter-form select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: #fff;
+}
+
+/* Style submit button */
+#filter-form button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Button hover effect */
+#filter-form button:hover {
+    background-color: #0056b3;
+}

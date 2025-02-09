@@ -23,8 +23,8 @@
 </html>
 {{ define "content" }}
 <section id="artists">
-    <h2>Artists</h2>
-    <form action="/artists" method="GET">
+    <!-- Filter form-->
+    <form id="filter-form" action="/artists" method="GET">
         <!-- <label for="name">Filter by Artist Name:</label> -->
         <select id="name" name="name">
             <option value="">Filter by Artist Name:</option>
