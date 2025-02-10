@@ -16,6 +16,7 @@ type Artist struct {
 	StartYear  int      `json:"creationDate"`
 	FirstAlbum string   `json:"firstAlbum"`
 	Members    []string `json:"members"`
+	//Locations  []string `json:"locations"`
 }
 
 // Cache variables
