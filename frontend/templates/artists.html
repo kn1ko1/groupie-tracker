@@ -29,7 +29,7 @@
         <select id="name" name="name">
             <option value="">Filter by Artist Name:</option>
             {{ range .SortedNames }}
-            <option value="{{ . }}">{{ . }}</option>
+            <option value="{{ . }}" {{ if eq . $.SelectedName }}selected{{ end }}>{{ . }}</option>>
             {{ end }}
         </select>
 
@@ -37,16 +37,24 @@
         <select id="year" name="year">
             <option value="">Filter by Start Year</option>
             {{ range .SortedYears }}
-            <option value="{{ . }}">{{ . }}</option>
+            <option value="{{ . }}" {{ if eq (printf "%d" .) $.SelectedYear }}selected{{ end }}>{{ . }}</option>
             {{ end }}
         </select>
 
         <!-- Location Filter Dropdown -->
-        <select id="location" name="location">
+            <select id="location" name="location">
             <option value="">Filter by Concert Location</option>
             {{ range .SortedLocations }}
-            <option value="{{ . }}">{{ . }}</option>
+            <option value="{{ . }}" {{ if eq . $.SelectedLocation }}selected{{ end }}>{{ . }}</option>
             {{ end }}
+        </select>
+
+
+        <!-- Sorting Filter Dropdown -->
+        <select id="sort" name="sort">
+            <option value="">Alphabetical order</option>
+            <option value="asc" {{ if eq $.SelectedSort "asc" }}selected{{ end }}>Artist name (A-Z)</option>
+            <option value="desc" {{ if eq $.SelectedSort "desc" }}selected{{ end }}>Artist name (Z-A)</option>
         </select>
 
         <!-- submit button -->

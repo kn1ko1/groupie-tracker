@@ -114,15 +114,16 @@ button:hover {
 #filter-form select {
     padding: 8px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid #1d64b0;
     font-size: 16px;
-    background-color: #fff;
+    color: whitesmoke;
+    background-color: #1d64b0;
 }
 
 /* Style submit button */
 #filter-form button {
     padding: 8px 15px;
-    background-color: #007bff;
+    background-color: #b11313;
     color: white;
     border: none;
     border-radius: 5px;
@@ -132,5 +133,5 @@ button:hover {
 
 /* Button hover effect */
 #filter-form button:hover {
-    background-color: #0056b3;
+    background-color: #0094ca;
 }
