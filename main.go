@@ -125,7 +125,6 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 			return artists[i].Name > artists[j].Name // Sort A-Z
 		})
 	} else if sortOrder == "asc" {
-		//fmt.Println(5)
 		sort.Slice(artists, func(i, j int) bool {
 			return artists[i].Name < artists[j].Name //Maintain orginal order
 		})
