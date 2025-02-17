@@ -23,14 +23,16 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 
 func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	apiURL := "https://groupietrackers.herokuapp.com/api/artists"
+	locationsAPI := "https://groupietrackers.herokuapp.com/api/locations"
+
+	// Only fetch once (no duplicate calls)
 	artists, err := fetchArtistsCached(apiURL)
 	if err != nil {
 		http.Error(w, "Failed to fetch artists", http.StatusInternalServerError)
 		return
 	}
 
-	// Fetch locations
-	locationsAPI := "https://groupietrackers.herokuapp.com/api/locations"
+	// ✅ Only fetch once (no duplicate call)
 	locations, err := fetchLocationsCached(locationsAPI)
 	if err != nil {
 		http.Error(w, "Failed to fetch locations", http.StatusInternalServerError)
@@ -52,23 +54,13 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Extract and sort artist names
 	artistNames := make([]string, 0, len(artists))
 	startYears := make([]int, 0, len(artists))
-
 	for _, artist := range artists {
 		artistNames = append(artistNames, artist.Name)
 		startYears = append(startYears, artist.StartYear)
-
-		// Store unique locations
-		for _, loc := range locations[artist.ID] {
-			if !locationSet[loc] {
-				locationSet[loc] = true
-				uniqueLocations = append(uniqueLocations, loc)
-			}
-		}
 	}
 
 	sort.Strings(artistNames) // Sort names alphabetically
 	sort.Ints(startYears)
-
 	sort.Strings(uniqueLocations) // Sort locations alphabetically
 
 	// Get filter values
@@ -115,22 +107,32 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 
 	// Get sorting order from query parameter
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))
+	//fmt.Println(1)
 
 	// Sort artist names
 	if sortOrder == "desc" {
 		sort.Sort(sort.Reverse(sort.StringSlice(artistNames))) // Z-A order
-	} else {
+		fmt.Println(2)
+	} else if sortOrder == "asc" {
 		sort.Strings(artistNames) // A-Z order (default)
+		//fmt.Println(3)
 	}
 
 	// Ensure sorting applies to the main artist list too
 	if sortOrder == "desc" {
+		fmt.Println(4)
 		sort.Slice(artists, func(i, j int) bool {
-			return artists[i].Name > artists[j].Name
+			return artists[i].Name > artists[j].Name // Sort A-Z
+		})
+	} else if sortOrder == "asc" {
+		//fmt.Println(5)
+		sort.Slice(artists, func(i, j int) bool {
+			return artists[i].Name < artists[j].Name //Maintain orginal order
 		})
 	} else {
-		sort.Slice(artists, func(i, j int) bool {
-			return artists[i].Name < artists[j].Name
+		// Ensure Default order resets properly
+		sort.SliceStable(artists, func(i, j int) bool {
+			return artists[i].Name < artists[j].Name //Maintain orginal order
 		})
 	}
 
@@ -172,11 +174,11 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		ShowDetail       bool // Now properly defined
 		SortedNames      []string
 		SortedYears      []int
+		SortedLocations  []string
 		Page             int
 		TotalPages       int
 		PrevPage         int
 		NextPage         int
-		SortedLocations  []string
 		SelectedName     string
 		SelectedYear     string
 		SelectedLocation string
@@ -187,10 +189,10 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		ShowDetail:       isFullView, // Show full details only on `/artists`
 		SortedNames:      artistNames,
 		SortedYears:      uniqueYears, // Now sorted in descending order
+		SortedLocations:  uniqueLocations,
 		Page:             page,
 		TotalPages:       totalPages,
 		PrevPage:         prevPage,
-		SortedLocations:  uniqueLocations,
 		NextPage:         nextPage,
 		SelectedName:     nameFilter,
 		SelectedYear:     yearFilter,
@@ -203,6 +205,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 
 func getArtistsHandler(w http.ResponseWriter, r *http.Request) {
 	apiURL := "https://groupietrackers.herokuapp.com/api/artists"
+
 	artists, err := fetchArtistsCached(apiURL)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error fetching artists: %v", err), http.StatusInternalServerError)

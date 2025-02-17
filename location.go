@@ -29,7 +29,7 @@ func fetchLocationsCached(url string) (map[int][]string, error) {
 
 	// Check cache validity
 	if time.Since(lastLocationFetchTime) < cacheDuration {
-		fmt.Println("Returning cached location data")
+		//fmt.Println("Returning cached location data")
 		return cachedLocations, nil
 	}
 
@@ -38,6 +38,9 @@ func fetchLocationsCached(url string) (map[int][]string, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Log only when fresh data is fetched
+	fmt.Println("Fetched fresh location data from API...")
 
 	// Update cache
 	cachedLocations = locations

@@ -29,7 +29,7 @@
         <select id="name" name="name">
             <option value="">Filter by Artist Name:</option>
             {{ range .SortedNames }}
-            <option value="{{ . }}" {{ if eq . $.SelectedName }}selected{{ end }}>{{ . }}</option>>
+            <option value="{{ . }}" {{ if eq . $.SelectedName }}selected{{ end }}>{{ . }}</option>
             {{ end }}
         </select>
 
@@ -49,16 +49,17 @@
             {{ end }}
         </select>
 
-
         <!-- Sorting Filter Dropdown -->
-        <select id="sort" name="sort">
-            <option value="">Alphabetical order</option>
-            <option value="asc" {{ if eq $.SelectedSort "asc" }}selected{{ end }}>Artist name (A-Z)</option>
-            <option value="desc" {{ if eq $.SelectedSort "desc" }}selected{{ end }}>Artist name (Z-A)</option>
-        </select>
-
+        <select id="sort" name="sort" onchange="this.form.submit()">
+            <option value="" {{ if eq $.SelectedSort "" }}selected{{ end }}>Default Order</option>
+            <option value="desc" {{ if eq $.SelectedSort "desc" }}selected{{ end }}>Sort by Name (A-Z)</option>
+            <option value="asc" {{ if eq $.SelectedSort "asc" }}selected{{ end }}>Sort by Name (Z-A)</option>
+         </select>
+        
+         <noscript><input type="submit" value="Apply Sort"></noscript>
         <!-- submit button -->
-        <button type="submit">Submit</button>
+        <button type="submit" value="Apply Sort">Submit</button>
+        <!-- </form> -->
     </form>
     
     <div id="artist-list">
