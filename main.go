@@ -118,25 +118,32 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(1)
 
 	// Sort artist names list for dropdown
-	if sortOrder == "desc" {
-		sort.Sort(sort.Reverse(sort.StringSlice(artistNames))) // Z-A order
-		fmt.Println(2)
-	} else {
-		sort.Strings(artistNames) // A-Z order (default)
-		//fmt.Println(3)
-	}
+	// if sortOrder == "desc" {
+	// 	sort.Sort(sort.Reverse(sort.StringSlice(artistNames))) // Z-A order
+	// 	fmt.Println(2)
+	// } else {
+	// 	sort.Strings(artistNames) // A-Z order (default)
+	// 	//fmt.Println(3)
+	// }
 
 	// Ensure sorting applies to the main artist list too
 	if sortOrder == "desc" {
 		fmt.Println(4)
 		// Ensure artists are sorted in descending order
-		sort.Slice(artists, func(i, j int) bool {
-			return artists[i].Name > artists[j].Name // Sort A-Z
+		sort.Slice(filteredArtists, func(i, j int) bool {
+			return filteredArtists[i].Name > filteredArtists[j].Name // Sort A-Z
+		})
+
+	} else if sortOrder == "asc" {
+		fmt.Println(4)
+		// Ensure artists are sorted in descending order
+		sort.Slice(filteredArtists, func(i, j int) bool {
+			return filteredArtists[i].Name < filteredArtists[j].Name // Sort A-Z
 		})
 	} else {
 		// Reset to default order using ID (this fixes "Default" order)
-		sort.SliceStable(artists, func(i, j int) bool {
-			return artists[i].ID < artists[j].ID
+		sort.SliceStable(filteredArtists, func(i, j int) bool {
+			return filteredArtists[i].ID < filteredArtists[j].ID // Sort by ID in ascending order // artists[i].ID < ists[j].ID
 		})
 		// sort.Slice(artists, func(i, j int) bool {
 		// 	return artists[i].Name < artists[j].Name //Maintain orginal order

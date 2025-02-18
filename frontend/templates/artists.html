@@ -50,10 +50,10 @@
         </select>
 
         <!-- Sorting Filter Dropdown -->
-        <select id="sort" name="sort" onchange="this.form.submit()">
+        <select id="sort" name="sort">
             <option value="" {{ if eq $.SelectedSort "" }}selected{{ end }}>Default Order</option>
-            <option value="desc" {{ if eq $.SelectedSort "desc" }}selected{{ end }}>Sort by Name (A-Z)</option>
-            <option value="asc" {{ if eq $.SelectedSort "asc" }}selected{{ end }}>Sort by Name (Z-A)</option>
+            <option value="asc" {{ if eq $.SelectedSort "asc" }}selected{{ end }}>Sort by Name (A-Z)</option>
+            <option value="desc" {{ if eq $.SelectedSort "desc" }}selected{{ end }}>Sort by Name (Z-A)</option>
          </select>
         
          <noscript><input type="submit" value="Apply Sort"></noscript>
