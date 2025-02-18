@@ -29,7 +29,7 @@ func fetchLocationsCached(url string) (map[int][]string, error) {
 
 	// Check cache validity
 	if time.Since(lastLocationFetchTime) < cacheDuration {
-		//fmt.Println("Returning cached location data")
+		fmt.Println("Returning cached location data")
 		return cachedLocations, nil
 	}
 

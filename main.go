@@ -22,6 +22,14 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 }
 
 func getArtistsPage(w http.ResponseWriter, r *http.Request) {
+	// ✅ Debugging: Print every request
+	fmt.Println("🔍 Processing Request:", r.URL.Path)
+
+	// Ignore favicon requests (prevents unnecessary calls)
+	if r.URL.Path == "/favicon.ico" {
+		return
+	}
+
 	apiURL := "https://groupietrackers.herokuapp.com/api/artists"
 	locationsAPI := "https://groupietrackers.herokuapp.com/api/locations"
 
@@ -109,11 +117,11 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))
 	//fmt.Println(1)
 
-	// Sort artist names
+	// Sort artist names list for dropdown
 	if sortOrder == "desc" {
 		sort.Sort(sort.Reverse(sort.StringSlice(artistNames))) // Z-A order
 		fmt.Println(2)
-	} else if sortOrder == "asc" {
+	} else {
 		sort.Strings(artistNames) // A-Z order (default)
 		//fmt.Println(3)
 	}
@@ -121,18 +129,22 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Ensure sorting applies to the main artist list too
 	if sortOrder == "desc" {
 		fmt.Println(4)
+		// Ensure artists are sorted in descending order
 		sort.Slice(artists, func(i, j int) bool {
 			return artists[i].Name > artists[j].Name // Sort A-Z
 		})
-	} else if sortOrder == "asc" {
-		sort.Slice(artists, func(i, j int) bool {
-			return artists[i].Name < artists[j].Name //Maintain orginal order
-		})
 	} else {
-		// Ensure Default order resets properly
+		// Reset to default order using ID (this fixes "Default" order)
 		sort.SliceStable(artists, func(i, j int) bool {
-			return artists[i].Name < artists[j].Name //Maintain orginal order
+			return artists[i].ID < artists[j].ID
 		})
+		// sort.Slice(artists, func(i, j int) bool {
+		// 	return artists[i].Name < artists[j].Name //Maintain orginal order
+		// } else {
+		// 	// Ensure Default order resets properly
+		// 	sort.SliceStable(artists, func(i, j int) bool {
+		// 		return artists[i].Name < artists[j].Name //Maintain orginal order
+		// 	})
 	}
 
 	// Pagination logic (5 columns x 3 rows = 15 artists per page)
