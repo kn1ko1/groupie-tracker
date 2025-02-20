@@ -93,32 +93,11 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	//locationFilter := strings.TrimSpace(r.URL.Query().Get("location")) // Future concert filtering
 	//fmt.Println(locationFilter)
 
+	// Sorting logic
 	filteredArtists := services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
-
-	// Get sorting order from query parameter
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))
-	//fmt.Println(1)
 
-	// Ensure sorting applies to the main artist list too
-	if sortOrder == "desc" {
-		fmt.Println(4)
-		// Ensure artists are sorted in descending order
-		sort.Slice(filteredArtists, func(i, j int) bool {
-			return filteredArtists[i].Name > filteredArtists[j].Name // Sort A-Z
-		})
-
-	} else if sortOrder == "asc" {
-		fmt.Println(4)
-		// Ensure artists are sorted in descending order
-		sort.Slice(filteredArtists, func(i, j int) bool {
-			return filteredArtists[i].Name < filteredArtists[j].Name // Sort A-Z
-		})
-	} else {
-		// Reset to default order using ID (this fixes "Default" order)
-		sort.SliceStable(filteredArtists, func(i, j int) bool {
-			return filteredArtists[i].ID < filteredArtists[j].ID // Sort by ID in ascending order // artists[i].ID < ists[j].ID
-		})
-	}
+	services.SortArtists(filteredArtists, sortOrder)
 
 	// Pagination logic (5 columns x 3 rows = 15 artists per page)
 	const itemsPerPage = 15
