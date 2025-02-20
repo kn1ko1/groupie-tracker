@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"groupie-tracker/models"
+	"groupie-tracker/services"
 	"net/http"
 	"sort"
 	"strconv"
@@ -91,27 +93,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	//locationFilter := strings.TrimSpace(r.URL.Query().Get("location")) // Future concert filtering
 	//fmt.Println(locationFilter)
 
-	// Filter artists basedon user selection
-	filteredArtists := make([]Artist, 0)
-	for _, artist := range artists {
-		//nameMatch := nameFilter == "" || artist.Name == nameFilter
-		//yearMatch := yearFilter == "" || strconv.Itoa(artist.StartYear) == yearFilter
-		locationMatch := locationFilter == ""
-
-		// Check if artist performed at the selected location
-		if !locationMatch {
-			for _, loc := range locations[artist.ID] {
-				if loc == locationFilter {
-					locationMatch = true
-					break
-				}
-			}
-		}
-
-		if locationMatch {
-			filteredArtists = append(filteredArtists, artist)
-		}
-	}
+	filteredArtists := services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
 
 	// Get sorting order from query parameter
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))
@@ -188,7 +170,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Define template data with dynamic content for home ('/home') vs Artists ('/artists')
 	data := struct {
 		Title            string
-		Artists          []Artist
+		Artists          []models.Artist
 		ShowDetail       bool // Now properly defined
 		SortedNames      []string
 		SortedYears      []int

@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"groupie-tracker/models"
 	"io"
 	"net/http"
 	"sync"
@@ -21,13 +22,13 @@ type Artist struct {
 
 // Cache variables
 var (
-	cachedArtists []Artist
+	cachedArtists []models.Artist
 	lastFetchTime time.Time
 	cacheMutex    sync.Mutex
 )
 
 // Fetch artists with caching
-func fetchArtistsCached(url string) ([]Artist, error) {
+func fetchArtistsCached(url string) ([]models.Artist, error) {
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
 
@@ -51,7 +52,7 @@ func fetchArtistsCached(url string) ([]Artist, error) {
 }
 
 // Fetch artists from API
-func fetchArtists(url string) ([]Artist, error) {
+func fetchArtists(url string) ([]models.Artist, error) {
 	response, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch artists: %v", err)
@@ -63,7 +64,7 @@ func fetchArtists(url string) ([]Artist, error) {
 		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
 
-	var artists []Artist
+	var artists []models.Artist
 	if err := json.Unmarshal(body, &artists); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal JSON: %v", err)
 	}
