@@ -3,17 +3,18 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"groupie-tracker/models"
 	"io"
 	"net/http"
 	"sync"
 	"time"
 )
 
-// Struct for locations
-type LocationData struct {
-	ID        int      `json:"id"`
-	Locations []string `json:"locations"`
-}
+// // Struct for locations
+// type LocationData struct {
+// 	ID        int      `json:"id"`
+// 	Locations []string `json:"locations"`
+// }
 
 // Cache for locations
 var (
@@ -64,7 +65,7 @@ func fetchLocations(url string) (map[int][]string, error) {
 
 	// Define API response structure
 	type APIResponse struct {
-		Index []LocationData `json:"index"`
+		Index []models.LocationData `json:"index"`
 	}
 
 	var responseData APIResponse
