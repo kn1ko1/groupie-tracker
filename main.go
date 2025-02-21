@@ -90,9 +90,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Get filter values from query parameters
 	nameFilter := strings.TrimSpace(r.URL.Query().Get("name"))
 	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
-	//locationFilter := strings.TrimSpace(r.URL.Query().Get("location")) // Future concert filtering
-	//fmt.Println(locationFilter)
-
+	
 	// Sorting logic
 	filteredArtists := services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))
@@ -106,26 +104,11 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		page = p
 	}
 
-	startIndex := (page - 1) * itemsPerPage
-	endIndex := startIndex + itemsPerPage
-	if endIndex > len(filteredArtists) {
-		endIndex = len(filteredArtists)
-	}
-
-	paginatedArtists := filteredArtists[startIndex:endIndex]
+	// Use the new pagination function
+	paginatedArtists, prevPage, nextPage := services.PaginateArtists(filteredArtists, page, itemsPerPage)
 
 	// Calculate total pages
 	totalPages := (len(filteredArtists) + itemsPerPage - 1) / itemsPerPage
-
-	// Precompute previous and next page numbers
-	prevPage := page - 1
-	if prevPage < 1 {
-		prevPage = 1
-	}
-	nextPage := page + 1
-	if nextPage > totalPages {
-		nextPage = totalPages
-	}
 
 	// Determine if full view (/artists) or minimal view (/)
 	isFullView := r.URL.Path == "/artists"
