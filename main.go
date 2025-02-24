@@ -76,7 +76,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Get filter values
 	locationFilter := strings.TrimSpace(r.URL.Query().Get("location"))
 
-	//Reverse the sorted years to make them descending
+	// Reverse the sorted years to make them descending
 	uniqueYears := make([]int, 0)
 	yearSet := make(map[int]bool)
 	for i := len(startYears) - 1; i >= 0; i-- { // Reverse iteration for descending order
@@ -90,7 +90,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Get filter values from query parameters
 	nameFilter := strings.TrimSpace(r.URL.Query().Get("name"))
 	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
-	
+
 	// Sorting logic
 	filteredArtists := services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))

@@ -64,6 +64,15 @@ button:hover {
     max-width: 100%;
     height: auto;
     border-radius: 5px;
+    text-align: center;
+}
+
+.artist-card h3 {
+    padding: 10px; /* Adds padding around the artist name */
+    margin: 0;
+    font-size: 1.0em; /* Adjust font size if needed */
+    background-color: rgba(0, 0, 0, 0.1); /* Light background to see the effect */
+    border-radius: 5px; /* Optional: rounded corners */
 }
 
 /* Ensure artist grid is always 5 columns and 3 rows */
