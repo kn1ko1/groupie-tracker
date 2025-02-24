@@ -12,9 +12,9 @@ import (
 
 func TestSortArtists(t *testing.T) {
 	artists := []models.Artist{
-		{Name: "ZZ Top"},
-		{Name: "AC/DC"},
-		{Name: "Metallica"},
+		{ID: 1, Name: "ZZ Top"},
+		{ID: 2, Name: "AC/DC"},
+		{ID: 3, Name: "Metallica"},
 	}
 
 	// Test Ascending Order (A-Z)
