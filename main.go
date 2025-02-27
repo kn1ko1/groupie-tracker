@@ -25,8 +25,8 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 
 func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// ✅ Debugging: Print every request
-	fmt.Println("🔍 Processing Request:", r.URL.Path)
-
+	// fmt.Println("🔍 Processing Request:", r.URL.Path)
+	
 	// Ignore favicon requests (prevents unnecessary calls)
 	if r.URL.Path == "/favicon.ico" {
 		return
@@ -39,6 +39,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	artists, err := fetchArtistsCached(apiURL)
 	if err != nil {
 		http.Error(w, "Failed to fetch artists", http.StatusInternalServerError)
+		fmt.Println("Error fetching artists:", err)
 		return
 	}
 
@@ -48,6 +49,10 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to fetch locations", http.StatusInternalServerError)
 		return
 	}
+
+	// fmt.Println("First Artist:", artists[0].Name)
+	// fmt.Println("Concert Locations for", artists[0].Name, ":", locations[artists[0].ID])
+
 
 	// Extract unique locations
 	locationSet := make(map[string]bool)
@@ -64,9 +69,10 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Extract and sort artist names
 	artistNames := make([]string, 0, len(artists))
 	startYears := make([]int, 0, len(artists))
-	for _, artist := range artists {
-		artistNames = append(artistNames, artist.Name)
-		startYears = append(startYears, artist.StartYear)
+	
+	for i, artist := range artists {
+		if locs, exists := locations[artist.ID]; exists {
+			artists[i].Locations = locs}
 	}
 
 	sort.Strings(artistNames) // Sort names alphabetically
