@@ -61,7 +61,7 @@ func getArtistDetailsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render artist details template
-	renderTemplate(w, "artist_details.html", selectedArtist)
+	renderTemplate(w, "singleview.html", selectedArtist)
 }
 
 func getArtistsPage(w http.ResponseWriter, r *http.Request) {
@@ -219,7 +219,7 @@ func main() {
 	// Define routes
 	http.HandleFunc("/", getArtistsPage)        // Default route renders the artists page
 	http.HandleFunc("/artists", getArtistsPage) // JSON API endpoint (optional)
-	http.HandleFunc("/artist", getArtistDetailsPage)
+	http.HandleFunc("/artist/", getArtistDetailsPage)
 
 	fmt.Println("Server running on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
