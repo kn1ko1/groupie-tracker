@@ -7,5 +7,5 @@ type Artist struct {
 	StartYear  int      `json:"creationDate"`
 	FirstAlbum string   `json:"firstAlbum"`
 	Members    []string `json:"members"`
-	Locations  []string `json:"locnames"` // New field with fake name to ignore
+	Locations  []string `json:"locnames"` // New field with new json name to ignore
 }

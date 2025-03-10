@@ -144,3 +144,32 @@ button:hover {
 #filter-form button:hover {
     background-color: #0094ca;
 }
+
+.clickable-image {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.clickable-image:hover {
+    transform: scale(1.05);
+}
+
+.artist-details {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    gap: 30px;
+}
+
+.artist-image img {
+    max-width: 400px; /* Adjust based on layout */
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.artist-info {
+    max-width: 500px;
+}

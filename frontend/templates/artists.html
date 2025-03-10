@@ -28,6 +28,7 @@
     <!-- Filter form-->
     <form id="filter-form" action="/artists" method="GET">
         <!-- <label for="name">Filter by Artist Name:</label> -->
+        <button onclick="myFunction()">Click me</button>
         <select id="name" name="name">
             <option value="">Filter by Artist Name:</option>
             {{ range .SortedNames }}
@@ -67,7 +68,9 @@
     <div id="artist-list">
         {{ range .Artists }}
         <div class="artist-card">
-            <img src="{{ .Image }}" alt="{{ .Name }}">
+            <a href="/artist/{{ .ID }}">
+                <img src="{{ .Image }}" alt="{{ .Name }}"  class="clickable-image">
+            </a>
             <h3>{{ .Name }}</h3>
 
             {{ if $.ShowDetail }}  <!-- Check if ShowDetail is true $ to reference outside of template -->

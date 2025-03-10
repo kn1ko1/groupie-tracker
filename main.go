@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+
+	"github.com/gorilla/mux"
 )
 
 var templates = template.Must(template.ParseGlob("./frontend/templates/*.html"))
@@ -23,19 +25,50 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	}
 }
 
-func getArtistsPage(w http.ResponseWriter, r *http.Request) {
-	// ✅ Debugging: Print every request
-	// fmt.Println("🔍 Processing Request:", r.URL.Path)
-	
-	// Ignore favicon requests (prevents unnecessary calls)
-	if r.URL.Path == "/favicon.ico" {
+func getArtistDetailsPage(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("here, getArtistDetailsPage")
+	// Extract artist ID from URL
+	idStr := strings.TrimPrefix(r.URL.Path, "/artist/")
+	artistID, err := strconv.Atoi(idStr)
+	fmt.Println("Artist ID:", artistID)
+
+	if err != nil {
+		http.Error(w, "Invalid artist ID", http.StatusBadRequest)
 		return
 	}
 
+	// Fetch all artists and find the matching one
+	apiURL := "https://groupietrackers.herokuapp.com/api/artists"
+	artists, err := fetchArtistsCached(apiURL)
+	if err != nil {
+		http.Error(w, "Failed to fetch artist details", http.StatusInternalServerError)
+		return
+	}
+
+	var selectedArtist *models.Artist
+	for _, artist := range artists {
+		if artist.ID == artistID {
+			selectedArtist = &artist
+			break
+		}
+	}
+
+	// If artist not found, return error
+	if selectedArtist == nil {
+		http.Error(w, "Artist not found", http.StatusNotFound)
+		return
+	}
+
+	// Render artist details template
+	renderTemplate(w, "artist_details.html", selectedArtist)
+}
+
+func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	apiURL := "https://groupietrackers.herokuapp.com/api/artists"
 	locationsAPI := "https://groupietrackers.herokuapp.com/api/locations"
-
 	// Only fetch once (no duplicate calls)
+
 	artists, err := fetchArtistsCached(apiURL)
 	if err != nil {
 		http.Error(w, "Failed to fetch artists", http.StatusInternalServerError)
@@ -53,7 +86,6 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println("First Artist:", artists[0].Name)
 	// fmt.Println("Concert Locations for", artists[0].Name, ":", locations[artists[0].ID])
 
-
 	// Extract unique locations
 	locationSet := make(map[string]bool)
 	uniqueLocations := make([]string, 0)
@@ -69,10 +101,14 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	// Extract and sort artist names
 	artistNames := make([]string, 0, len(artists))
 	startYears := make([]int, 0, len(artists))
-	
+
 	for i, artist := range artists {
+		artistNames = append(artistNames, artist.Name)
+		startYears = append(startYears, artist.StartYear)
+
 		if locs, exists := locations[artist.ID]; exists {
-			artists[i].Locations = locs}
+			artists[i].Locations = locs
+		}
 	}
 
 	sort.Strings(artistNames) // Sort names alphabetically
@@ -81,6 +117,8 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 
 	// Get filter values
 	locationFilter := strings.TrimSpace(r.URL.Query().Get("location"))
+	nameFilter := strings.TrimSpace(r.URL.Query().Get("name"))
+	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
 
 	// Reverse the sorted years to make them descending
 	uniqueYears := make([]int, 0)
@@ -92,10 +130,6 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 			uniqueYears = append(uniqueYears, year)
 		}
 	}
-
-	// Get filter values from query parameters
-	nameFilter := strings.TrimSpace(r.URL.Query().Get("name"))
-	yearFilter := strings.TrimSpace(r.URL.Query().Get("year"))
 
 	// Sorting logic
 	filteredArtists := services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
@@ -156,13 +190,22 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func getArtistsHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	artistID := vars["id"]
 	apiURL := "https://groupietrackers.herokuapp.com/api/artists"
-
+	// Find the artist with the given ID
 	artists, err := fetchArtistsCached(apiURL)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error fetching artists: %v", err), http.StatusInternalServerError)
 		return
 	}
+	// Render the singleview template with the artist data
+	tmpl, err := template.ParseFiles("singleview.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(w, artistID)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(artists)
@@ -176,6 +219,7 @@ func main() {
 	// Define routes
 	http.HandleFunc("/", getArtistsPage)        // Default route renders the artists page
 	http.HandleFunc("/artists", getArtistsPage) // JSON API endpoint (optional)
+	http.HandleFunc("/artist", getArtistDetailsPage)
 
 	fmt.Println("Server running on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
