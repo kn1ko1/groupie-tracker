@@ -1,0 +1,34 @@
+[33m8bf7924[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mgt-freshStart[m[33m, [m[1;31morigin/gt-freshStart[m[33m)[m fixed selected artist page as single view
+[33mb8c9aa5[m Adding selected artist url end-point
+[33mae2438c[m Added Concert locations to artist card
+[33m6966f16[m Included IDs in  main_test.go
+[33mbb6a3da[m Amended main_test.go to test sorting, json response and pagination
+[33mfbfe545[m Refactored main to pagination.go
+[33m65014f2[m Fixed sorting logic with sorting.go
+[33m1c9bdec[m fixed fetchLocation.go and renames files in Models folder
+[33m961e2e6[m fixed calling filters.go
+[33mb590a80[m Asc and Desc order is fixed
+[33m0a7799e[m Debbuging for browser calls
+[33m5c09f24[m changed cache duration to 1 minute
+[33m7270c5f[m fixed multiple or duplicate calls from location and artist data
+[33m1dc0174[m Created a new go file for location filter and a global cache in a new config file
+[33m189ae18[m removed locations struct in data.go
+[33m067569a[m Styled filter form
+[33ma5769c1[m Fixed locations appearing on pulldown.
+[33m95ea0cb[m Merge branch 'gt-freshStart' of https://github.com/kn1ko1/groupie-tracker into gt-freshStart
+[33ma473bd1[m fixed sorted years with location filter still in progress
+[33m8b67791[m Location filter in progress
+[33m96f5d82[m Removed filter labdel
+[33m959928f[m Pagination fixed
+[33m56abdd4[m 5 column page added
+[33mb24c440[m sorted drop-down menus
+[33m4457022[m home vs artists page fixed
+[33m1146238[m Changed drop filter style to drop-down
+[33m9ca4bd4[m without debugging
+[33mdd87c93[m fixed filtering
+[33m8d34fa0[m testing filters
+[33mcc02b5e[m fixing syntax error
+[33m3f812e5[m before batt dies
+[33m497212a[m fresh start 1st commit
+[33m858f7c1[m[33m ([m[1;31morigin/master[m[33m)[m second commit
+[33me04b9d4[m First commit
