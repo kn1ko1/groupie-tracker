@@ -26,19 +26,20 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 }
 
 func getArtistDetailsPage(w http.ResponseWriter, r *http.Request) {
-
 	fmt.Println("here, getArtistDetailsPage")
+
 	// Extract artist ID from URL
-	idStr := strings.TrimPrefix(r.URL.Path, "/artist/")
-	artistID, err := strconv.Atoi(idStr)
-	fmt.Println("Artist ID:", artistID)
+	nameStr := strings.TrimPrefix(r.URL.Path, "/artist/")
+	nameStr = strings.TrimSpace(nameStr)
+	//artistID, err := strconv.Atoi(idStr)
+	fmt.Println("Extracted Artist Name from URL:", nameStr)
 
-	if err != nil {
-		http.Error(w, "Invalid artist ID", http.StatusBadRequest)
-		return
-	}
+	// if err != nil {
+	// 	http.Error(w, "Invalid artist ID", http.StatusBadRequest)
+	// 	return
+	// }
 
-	// Fetch all artists and find the matching one
+	// Fetch all artists
 	apiURL := "https://groupietrackers.herokuapp.com/api/artists"
 	artists, err := fetchArtistsCached(apiURL)
 	if err != nil {
@@ -46,13 +47,18 @@ func getArtistDetailsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("Available artists:")
+	for _, artist := range artists {
+        fmt.Println(artist.Name) // Check if the artist exists in the list
+    }
+
 	var selectedArtist *models.Artist
 	for _, artist := range artists {
-		if artist.ID == artistID {
-			selectedArtist = &artist
-			break
-		}
-	}
+		if strings.EqualFold(strings.TrimSpace(artist.Name), nameStr) {
+            selectedArtist = &artist
+            break
+        }
+    }
 
 	// If artist not found, return error
 	if selectedArtist == nil {

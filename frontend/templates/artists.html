@@ -27,15 +27,6 @@
 <section id="artists">
     <!-- Filter form-->
     <form id="filter-form" action="/artists" method="GET">
-        <!-- <label for="name">Filter by Artist Name:</label> -->
-        <button onclick="myFunction()">Click me</button>
-        <select id="name" name="name">
-            <option value="">Filter by Artist Name:</option>
-            {{ range .SortedNames }}
-            <option value="{{ . }}" {{ if eq . $.SelectedName }}selected{{ end }}>{{ . }}</option>
-            {{ end }}
-        </select>
-
         <!-- Year Filter Dropdown -->
         <select id="year" name="year">
             <option value="">Filter by Start Year</option>
@@ -68,7 +59,7 @@
     <div id="artist-list">
         {{ range .Artists }}
         <div class="artist-card">
-            <a href="/artist/{{ .ID }}">
+            <a href="/artist/{{ .Name }}">{{ .Name }}</a>
                 <img src="{{ .Image }}" alt="{{ .Name }}"  class="clickable-image">
             </a>
             <h3>{{ .Name }}</h3>
