@@ -6,6 +6,7 @@ import (
 	"groupie-tracker/models"
 	"groupie-tracker/services"
 	"net/http"
+	"net/url"
 	"sort"
 	"strconv"
 	"strings"
@@ -30,7 +31,13 @@ func getArtistDetailsPage(w http.ResponseWriter, r *http.Request) {
 
 	// Extract artist ID from URL
 	nameStr := strings.TrimPrefix(r.URL.Path, "/artist/")
-	nameStr = strings.TrimSpace(nameStr)
+	decodedName, err := url.QueryUnescape(nameStr) // ✅ Decodes %20 into spaces
+	if err != nil {
+		http.Error(w, "Invalid artist name", http.StatusBadRequest)
+		return
+	}
+	nameStr = strings.TrimSpace(decodedName)
+	
 	//artistID, err := strconv.Atoi(idStr)
 	fmt.Println("Extracted Artist Name from URL:", nameStr)
 
@@ -49,16 +56,16 @@ func getArtistDetailsPage(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Available artists:")
 	for _, artist := range artists {
-        fmt.Println(artist.Name) // Check if the artist exists in the list
-    }
+		fmt.Println(artist.Name) // Check if the artist exists in the list
+	}
 
 	var selectedArtist *models.Artist
 	for _, artist := range artists {
 		if strings.EqualFold(strings.TrimSpace(artist.Name), nameStr) {
-            selectedArtist = &artist
-            break
-        }
-    }
+			selectedArtist = &artist
+			break
+		}
+	}
 
 	// If artist not found, return error
 	if selectedArtist == nil {

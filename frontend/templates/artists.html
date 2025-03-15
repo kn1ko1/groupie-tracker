@@ -59,7 +59,7 @@
     <div id="artist-list">
         {{ range .Artists }}
         <div class="artist-card">
-            <a href="/artist/{{ .Name }}">{{ .Name }}</a>
+            <a href="/artist/{{ .Name }}">
                 <img src="{{ .Image }}" alt="{{ .Name }}"  class="clickable-image">
             </a>
             <h3>{{ .Name }}</h3>
