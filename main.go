@@ -37,7 +37,7 @@ func getArtistDetailsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	nameStr = strings.TrimSpace(decodedName)
-	
+
 	//artistID, err := strconv.Atoi(idStr)
 	fmt.Println("Extracted Artist Name from URL:", nameStr)
 
@@ -85,7 +85,7 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 	artists, err := fetchArtistsCached(apiURL)
 	if err != nil {
 		http.Error(w, "Failed to fetch artists", http.StatusInternalServerError)
-		fmt.Println("Error fetching artists:", err)
+		//fmt.Println("Error fetching artists:", err)
 		return
 	}
 
@@ -144,8 +144,23 @@ func getArtistsPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Extract search query from the URL
+	searchQuery := strings.TrimSpace(r.URL.Query().Get("name"))
+
+	// If searchQuery is not empty, filter artists
+	var filteredArtists []models.Artist
+	if searchQuery != "" {
+		for _, artist := range artists {
+			if strings.Contains(strings.ToLower(artist.Name), strings.ToLower(searchQuery)) {
+				// filteredArtists = append(filteredArtists, artist)
+			}
+		}
+	} else {
+		filteredArtists = artists // No search, show all artists
+	}
+
 	// Sorting logic
-	filteredArtists := services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
+	filteredArtists = services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))
 
 	services.SortArtists(filteredArtists, sortOrder)
