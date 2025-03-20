@@ -6,7 +6,6 @@ import (
 	"groupie-tracker/models"
 	"groupie-tracker/services"
 	"net/http"
-	"net/url"
 	"sort"
 	"strconv"
 	"strings"
@@ -15,7 +14,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var templates = template.Must(template.ParseGlob("./frontend/templates/*.html"))
+//var templates = template.Must(template.ParseGlob("./frontend/templates/*.html"))
+
+var funcMap = template.FuncMap{
+	"replaceSpaces": func(s string) string {
+		return strings.ReplaceAll(s, " ", "-") // Convert spaces to hyphens
+	},
+}
+
+var templates = template.Must(template.New("").Funcs(funcMap).ParseGlob("./frontend/templates/*.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	err := templates.ExecuteTemplate(w, tmpl, data)
@@ -27,19 +34,28 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 }
 
 func getArtistDetailsPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("here, getArtistDetailsPage")
+	fmt.Println("🔍 Processing Request:", r.URL.Path)
 
-	// Extract artist ID from URL
+	// Extract artist name from URL
 	nameStr := strings.TrimPrefix(r.URL.Path, "/artist/")
-	decodedName, err := url.QueryUnescape(nameStr) // ✅ Decodes %20 into spaces
-	if err != nil {
-		http.Error(w, "Invalid artist name", http.StatusBadRequest)
-		return
-	}
-	nameStr = strings.TrimSpace(decodedName)
+	// decodedName, err := url.QueryUnescape(nameStr) // ✅ Decode %20 into spaces
+	// if err != nil {
+	// 	http.Error(w, "Invalid artist name", http.StatusBadRequest)
+	// 	return
+	// }
+	nameStr = strings.ReplaceAll(nameStr, "-", " ")
+	nameStr = strings.TrimSpace(nameStr)
+
+	fmt.Println("Extracted Artist Name from URL:", nameStr) // 🔍 Debugging
+	// decodedName, err := url.QueryUnescape(nameStr) // ✅ Decodes %20 into spaces
+	// if err != nil {
+	// 	http.Error(w, "Invalid artist name", http.StatusBadRequest)
+	// 	return
+	// }
+	// nameStr = strings.TrimSpace(decodedName)
 
 	//artistID, err := strconv.Atoi(idStr)
-	fmt.Println("Extracted Artist Name from URL:", nameStr)
+	// fmt.Println("Extracted Artist Name from URL:", nameStr)
 
 	// if err != nil {
 	// 	http.Error(w, "Invalid artist ID", http.StatusBadRequest)
