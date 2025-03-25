@@ -13,13 +13,19 @@ import (
 
 // var templates = template.Must(template.ParseGlob("./frontend/templates/*.html"))
 
-var templates = template.Must(
-	template.New("").Funcs(template.FuncMap{
-		"replaceSpaces": func(s string) string {
-			return strings.ReplaceAll(s, " ", "-")
-		},
-	}).ParseGlob("./frontend/templates/*.html"),
-)
+var templates = template.Must(template.New("").Funcs(template.FuncMap{
+	"add": func(a, b int) int { return a + b },
+	"until": func(count int) []int {
+		var i []int
+		for j := 1; j <= count; j++ {
+			i = append(i, j)
+		}
+		return i
+	},
+	"replaceSpaces": func(s string) string {
+		return strings.ReplaceAll(s, " ", "-") // Convert spaces to hyphens
+	},
+}).ParseGlob("./frontend/templates/*.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	err := templates.ExecuteTemplate(w, tmpl, data)
@@ -88,6 +94,38 @@ func GetArtistsPage(w http.ResponseWriter, r *http.Request) {
 
 	filteredArtists := services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))
+	searchQuery := strings.TrimSpace(strings.ToLower(r.URL.Query().Get("search")))
+
+	//var filteredArtists []models.Artist
+	if searchQuery != "" {
+		for _, artist := range artists {
+			// Match on artist name
+			if strings.Contains(strings.ToLower(artist.Name), searchQuery) {
+				filteredArtists = append(filteredArtists, artist)
+				continue
+			}
+
+			// Match on member names
+			for _, member := range artist.Members {
+				if strings.Contains(strings.ToLower(member), searchQuery) {
+					filteredArtists = append(filteredArtists, artist)
+					break
+				}
+			}
+
+			// Match on concert locations
+			for _, loc := range artist.Locations {
+				if strings.Contains(strings.ToLower(loc), searchQuery) {
+					filteredArtists = append(filteredArtists, artist)
+					break
+				}
+			}
+		}
+	}
+	// } else {
+	// 	// No search input; use default filtered logic (name/year/location)
+	// 	filteredArtists = services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
+	// }
 
 	services.SortArtists(filteredArtists, sortOrder)
 

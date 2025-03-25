@@ -101,6 +101,12 @@ button:hover {
     border-radius: 5px;
 }
 
+.pagination-btn.active {
+    background-color: #333;
+    color: #fff;
+    font-weight: bold;
+}
+
 .pagination-btn:hover {
     background-color: #666;
 }

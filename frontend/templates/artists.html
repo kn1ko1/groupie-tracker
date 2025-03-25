@@ -15,7 +15,20 @@
                 <li><a href="/artists">Artists</a></li>
                 <form action="/artists" method="GET">
                     <!-- Search Bar -->
-                    <input type="text" id="search" name="search" placeholder="Search artists...">
+                    <input type="text" id="search" name="search" placeholder="Search artists..." list="suggestiopns">
+                    <datalist id="suggestiopns">
+                        {{ range .SortedNames }}
+                        <option value="{{ . }}"></option>
+                        {{ end }}
+                        {{ range .SortedLocations }}
+                        <option value="{{ . }}"></option>
+                        {{ end }}
+                        {{ range .Artists }}
+                            {{ range .Members }}
+                            <option value="{{ . }}"></option>
+                            {{ end }}
+                        {{ end }}
+                    </datalist>
                 </form>
             </ul>
         </nav>
@@ -89,12 +102,10 @@
 
     <!-- Pagination Controls -->
     <div class="pagination">
-        {{ if gt .Page 1 }}
-        <a href="?page={{ .PrevPage }}" class="pagination-btn">Previous</a>
-        {{ end }}
-        <span>Page {{ .Page }} of {{ .TotalPages }}</span>
-        {{ if lt .Page .TotalPages }}
-        <a href="?page={{ .NextPage }}" class="pagination-btn">Next</a>
+        {{ range $i := until .TotalPages }}
+        <a href="?page={{ add $i 1 }}" class="pagination-btn {{ if eq $.Page (add $i 1) }}active{{ end }}">
+            {{ add $i 1 }}
+        </a>
         {{ end }}
     </div>
 </section>
