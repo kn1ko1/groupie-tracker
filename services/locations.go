@@ -1,4 +1,4 @@
-package main
+package services
 
 import (
 	"encoding/json"
@@ -15,10 +15,11 @@ var (
 	cachedLocations       map[int][]string
 	lastLocationFetchTime time.Time
 	locationCacheMutex    sync.Mutex
+	//cacheDuration = 5 * time.Minute
 )
 
 // Fetch locations with caching
-func fetchLocationsCached(url string) (map[int][]string, error) {
+func FetchLocationsCached(url string) (map[int][]string, error) {
 	locationCacheMutex.Lock()
 	defer locationCacheMutex.Unlock()
 

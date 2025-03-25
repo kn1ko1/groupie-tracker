@@ -1,4 +1,4 @@
-package main
+package services
 
 import (
 	"encoding/json"
@@ -25,10 +25,11 @@ var (
 	cachedArtists []models.Artist
 	lastFetchTime time.Time
 	cacheMutex    sync.Mutex
+	cacheDuration = 5 * time.Minute
 )
 
 // Fetch artists with caching
-func fetchArtistsCached(url string) ([]models.Artist, error) {
+func FetchArtistsCached(url string) ([]models.Artist, error) {
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
 
