@@ -92,12 +92,12 @@ func GetArtistsPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	filteredArtists := services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
+	var filteredArtists []models.Artist
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))
 	searchQuery := strings.TrimSpace(strings.ToLower(r.URL.Query().Get("search")))
 
 	//var filteredArtists []models.Artist
-	if searchQuery != "" {
+	if len(searchQuery) >= 2 { // Only search if the query is at least 2 characters
 		for _, artist := range artists {
 			// Match on artist name
 			if strings.Contains(strings.ToLower(artist.Name), searchQuery) {
@@ -120,12 +120,18 @@ func GetArtistsPage(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 			}
+
+			// Match on first album (e.g. "2005-04-01")
+			if strings.Contains(strings.ToLower(artist.FirstAlbum), searchQuery) ||
+				strings.Contains(strconv.Itoa(artist.StartYear), searchQuery) {
+				filteredArtists = append(filteredArtists, artist)
+				continue
+			}
 		}
+	} else {
+		// Match on creation year
+		filteredArtists = services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
 	}
-	// } else {
-	// 	// No search input; use default filtered logic (name/year/location)
-	// 	filteredArtists = services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
-	// }
 
 	services.SortArtists(filteredArtists, sortOrder)
 
