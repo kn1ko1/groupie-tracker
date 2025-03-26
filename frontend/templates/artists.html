@@ -103,8 +103,8 @@
     <!-- Pagination Controls -->
     <div class="pagination">
         {{ range $i := until .TotalPages }}
-        <a href="?page={{ add $i 1 }}" class="pagination-btn {{ if eq $.Page (add $i 1) }}active{{ end }}">
-            {{ add $i 1 }}
+        <a href="?page={{ add $i 0 }}" class="pagination-btn {{ if eq $.Page (add $i 1) }}active{{ end }}">
+            {{ add $i 0 }}
         </a>
         {{ end }}
     </div>
