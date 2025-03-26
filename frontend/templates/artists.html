@@ -79,7 +79,7 @@
             </a>
             <h3>{{ .Name }}</h3>
 
-            {{ if $.ShowDetail }}  <!-- Check if ShowDetail is true $ to reference outside of template -->
+            {{ if and $.ShowDetail (eq $.Page 0) }}  <!-- Check if ShowDetail is true $ to reference outside of template -->
             <!-- ✅ Only show these details on /artists -->
             <p>First Album: {{ .FirstAlbum }}</p>
             <p>Year Started: {{ .StartYear }}</p>
@@ -101,11 +101,23 @@
     </div>
 
     <!-- Pagination Controls -->
-    <div class="pagination">
+    <div class="pagination"> 
+        {{ if gt .Page 1 }}
+            <a href="?page={{ .PrevPage }}" class="pagination-btn">&laquo; Prev</a>
+        {{ end }}
+        
+
         {{ range $i := until .TotalPages }}
-        <a href="?page={{ add $i 0 }}" class="pagination-btn {{ if eq $.Page (add $i 1) }}active{{ end }}">
-            {{ add $i 0 }}
-        </a>
+            {{ $pageNum := add $i 0 }}
+            {{ if eq $.Page $pageNum }}
+                <span class="pagination-btn active">{{ $pageNum }}</span>
+            {{ else }}
+                <a href="?page={{ $pageNum }}" class="pagination-btn">{{ $pageNum }}</a>
+            {{ end }}
+        {{ end }}
+
+        {{ if lt .Page .TotalPages }}
+        <a href="?page={{ .NextPage }}" class="pagination-btn">Next &raquo;</a>
         {{ end }}
     </div>
 </section>

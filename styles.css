@@ -94,9 +94,9 @@ button:hover {
 .pagination-btn {
     display: inline-block;
     padding: 10px 15px;
-    margin: 0 5px;
-    background-color: #444;
-    color: white;
+    margin: 0 4px;
+    border: 1px solid #ccc;
+    color: #b2b3be;
     text-decoration: none;
     border-radius: 5px;
 }
@@ -105,11 +105,14 @@ button:hover {
     background-color: #333;
     color: #fff;
     font-weight: bold;
+    cursor: default;
 }
 
 .pagination-btn:hover {
     background-color: #666;
+    font-weight: bold;
 }
+
 /* Center the form and justify the content */
 #filter-form {
     display: flex;

@@ -11,67 +11,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//var templates = template.Must(template.ParseGlob("./frontend/templates/*.html"))
-
-// var funcMap = template.FuncMap{
-// 	"replaceSpaces": func(s string) string {
-// 		return strings.ReplaceAll(s, " ", "-") // Convert spaces to hyphens
-// 	},
-// }
-
-// var templates = template.Must(template.New("").Funcs(funcMap).ParseGlob("./frontend/templates/*.html"))
-
-// func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
-// 	err := templates.ExecuteTemplate(w, tmpl, data)
-// 	if err != nil {
-// 		// Prevent multiple response writes
-// 		http.Error(w, fmt.Sprintf("Unable to load template: %v", err), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
-
-// func getArtistDetailsPage(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Println("🔍 Processing Request:", r.URL.Path)
-
-// 	// Extract artist name from URL
-// 	nameStr := strings.TrimPrefix(r.URL.Path, "/artist/")
-
-// 	nameStr = strings.ReplaceAll(nameStr, "-", " ")
-// 	nameStr = strings.TrimSpace(nameStr)
-
-// 	fmt.Println("Extracted Artist Name from URL:", nameStr) // 🔍 Debugging
-
-// 	// Fetch all artists
-// 	apiURL := "https://groupietrackers.herokuapp.com/api/artists"
-// 	artists, err := services.FetchArtistsCached(apiURL)
-// 	if err != nil {
-// 		http.Error(w, "Failed to fetch artist details", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	fmt.Println("Available artists:")
-// 	for _, artist := range artists {
-// 		fmt.Println(artist.Name) // Check if the artist exists in the list
-// 	}
-
-// 	var selectedArtist *models.Artist
-// 	for _, artist := range artists {
-// 		if strings.EqualFold(strings.TrimSpace(artist.Name), nameStr) {
-// 			selectedArtist = &artist
-// 			break
-// 		}
-// 	}
-
-// 	// If artist not found, return error
-// 	if selectedArtist == nil {
-// 		http.Error(w, "Artist not found", http.StatusNotFound)
-// 		return
-// 	}
-
-// 	// Render artist details template
-// 	renderTemplate(w, "singleview.html", selectedArtist)
-// }
-
 func getArtistsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	artistID := vars["id"]
