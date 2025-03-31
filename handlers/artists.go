@@ -94,7 +94,10 @@ func GetArtistsPage(w http.ResponseWriter, r *http.Request) {
 
 	var filteredArtists []models.Artist
 	sortOrder := strings.TrimSpace(r.URL.Query().Get("sort"))
-	searchQuery := strings.TrimSpace(strings.ToLower(r.URL.Query().Get("search")))
+	rawQuery := strings.TrimSpace(strings.ToLower(r.URL.Query().Get("search")))
+
+	// Remove suffixes like " - artist", " - member", " - location" if present
+	searchQuery := strings.Split(rawQuery, " - ")[0]
 
 	//var filteredArtists []models.Artist
 	if len(searchQuery) >= 2 { // Only search if the query is at least 2 characters
@@ -109,7 +112,7 @@ func GetArtistsPage(w http.ResponseWriter, r *http.Request) {
 			for _, member := range artist.Members {
 				if strings.Contains(strings.ToLower(member), searchQuery) {
 					filteredArtists = append(filteredArtists, artist)
-					break
+					break // Avoid duplicate appending
 				}
 			}
 
@@ -131,6 +134,7 @@ func GetArtistsPage(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// Match on creation year
 		filteredArtists = services.FilterArtists(artists, locations, nameFilter, yearFilter, locationFilter)
+
 	}
 
 	services.SortArtists(filteredArtists, sortOrder)

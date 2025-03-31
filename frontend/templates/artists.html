@@ -17,16 +17,21 @@
                     <!-- Search Bar -->
                     <input type="text" id="search" name="search" placeholder="Search artists..." list="suggestiopns">
                     <datalist id="suggestiopns">
-                        {{ range .SortedNames }}
-                        <option value="{{ . }}"></option>
-                        {{ end }}
-                        {{ range .SortedLocations }}
-                        <option value="{{ . }}"></option>
-                        {{ end }}
+                        <!-- Artist names -->
                         {{ range .Artists }}
+                        <option value="{{ .Name }} - Artist"></option>
+                        {{ end }}
+
+                        <!-- Group members-->
+                         {{ range .Artists }}
                             {{ range .Members }}
-                            <option value="{{ . }}"></option>
+                            <option value="{{ . }} - Band Member"></option>
                             {{ end }}
+                        {{ end }}
+
+                        <!-- Concert locations -->
+                        {{ range .SortedLocations }}
+                        <option value="{{ . }} - Concert Location"></option>
                         {{ end }}
                     </datalist>
                 </form>
